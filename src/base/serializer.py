@@ -11,6 +11,6 @@ class Serializer: # Save and load models
     @staticmethod
     def load(filepath: str):
         if not os.path.exists(filepath):
-            raise FileNotFoundError(f"File tidak ditemukan: {filepath}")
+            raise FileNotFoundError(f"File not found: {filepath}")
         with open(filepath, "rb") as f:
             return pickle.load(f)
