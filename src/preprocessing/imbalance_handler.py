@@ -54,7 +54,7 @@ class ImbalanceHandler(BaseEstimator): # Resamples training data to balance clas
             synthetic = []
             for _ in range(n_synth):
                 i = rng.integers(0, len(X_min))
-                nn = nn_indices[i, rng.integers(0, k)]
+                nn = nn_indices[i, rng.integers(0, k)] # nn = nearest neighbor
                 gap = rng.random()
                 synthetic.append(X_min[i] + gap * (X_min[nn] - X_min[i]))
 
