@@ -74,7 +74,7 @@ __all__ = [
     "DataCleaner", "CategoricalEncoder", "FeatureScaler", "ImbalanceHandler",
     "FeatureSelector", "PCAReducer", "PreprocessingPipeline",
     # Scratch Models
-    "KNN", "DecisionTree", "LogisticRegression", "SVM", "NaiveBayes",
+    "KNNScratch", "DecisionTreeScratch", "LogisticRegressionScratch", "SVMScratch", "NaiveBayesScratch",
     # Sklearn Models
     "KNNSklearn", "DecisionTreeSklearn", "LogisticRegressionSklearn", "SVMSklearn", "NaiveBayesSklearn",
     # Evaluation
