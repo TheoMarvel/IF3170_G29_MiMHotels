@@ -28,5 +28,7 @@ class GaussianKernel(Kernel): # RBF Kernel: K(x1, x2) = exp(-gamma * ||x1 - x2||
         self.gamma = gamma
 
     def compute(self, X1: np.ndarray, X2: np.ndarray) -> np.ndarray:
-        squared_dist = np.sum((X1-X2)**2)
+        x1_sq = np.sum(X1 ** 2, axis=1, keepdims=True).T
+        x2_sq = np.sum(X2 ** 2, axis=1, keepdims=True)
+        squared_dist = np.maximum(x1_sq + x2_sq - 2 * np.dot(X1.T, X2), 0.0)
         return np.exp(-self.gamma * squared_dist)
