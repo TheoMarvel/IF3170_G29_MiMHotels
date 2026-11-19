@@ -63,10 +63,11 @@ class SVMScratch(BaseClassifier):
         alphas = np.zeros(n_samples, dtype=float)
 
         Y_K = np.outer(y_signed, y_signed) * K
+
+        eff_lr = min(self.lr, 1.0 / (np.max(np.sum(np.abs(Y_K), axis=1)) + 1e-8))
         for _ in range(self.max_iter):
             grad = 1.0 - np.dot(Y_K, alphas)
-            alphas = np.clip(alphas + self.lr * grad, 0.0, self.C)
-            # Enforce sum(alpha_i * y_i) = 0 constraint
+            alphas = np.clip(alphas + eff_lr * grad, 0.0, self.C)
             alphas -= y_signed * (np.dot(alphas, y_signed) / n_samples)
             alphas = np.clip(alphas, 0.0, self.C)
 
@@ -81,7 +82,12 @@ class SVMScratch(BaseClassifier):
         # Compute bias b from support vectors on the margin
         K_sv = self._kernel_matrix(self.support_vectors_, self.support_vectors_)
         preds_sv = np.dot(K_sv, self.alphas_ * self.support_labels_)
-        self.b_ = float(np.mean(self.support_labels_ - preds_sv))
+        
+        margin_mask = (self.alphas_ > 1e-5) & (self.alphas_ < self.C - 1e-5)
+        if np.any(margin_mask):
+            self.b_ = float(np.mean(self.support_labels_[margin_mask] - preds_sv[margin_mask]))
+        else:
+            self.b_ = float(np.mean(self.support_labels_ - preds_sv))
 
         self.is_fitted = True
         return self
