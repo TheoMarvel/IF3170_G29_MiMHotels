@@ -53,7 +53,7 @@ class Metrics: # Evaluation metrics for binary classification
         # Prepend origin (0, 0) and compute area via trapezoidal rule
         tpr = np.concatenate([[0.0], tpr])
         fpr = np.concatenate([[0.0], fpr])
-        return float(np.trapz(tpr, fpr))
+        return float(np.sum(np.diff(fpr) * (tpr[:-1] + tpr[1:]) / 2.0))
 
     @staticmethod
     def total_cost(y_true, y_pred, fp_cost: float = 2.0, fn_cost: float = 1.0) -> float:
