@@ -5,6 +5,7 @@ from src.dependencies import (
     L1Regularizer,
     L2Regularizer,
     ElasticNetRegularizer,
+    GradientOptimizer
 )
 
 
