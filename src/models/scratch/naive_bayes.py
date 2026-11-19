@@ -2,7 +2,7 @@ import numpy as np
 from src.base import BaseClassifier
 
 
-class NaiveBayesScratch(BaseClassifier): # Mixed Gaussian & Categorical Naive Bayes
+class NaiveBayes(BaseClassifier): # Mixed Gaussian & Categorical Naive Bayes
 
     def __init__(self, laplace_alpha: float = 1.0, var_smoothing: float = 1e-8, max_cat_unique: int = 15):
         super().__init__()

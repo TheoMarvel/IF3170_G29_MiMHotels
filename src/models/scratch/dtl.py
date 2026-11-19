@@ -4,7 +4,7 @@ from src.base import BaseClassifier
 from src.dependencies import InformationGain, GainRatio, DecisionTreeNode
 
 
-class DecisionTreeScratch(BaseClassifier): # DTL ID3 and C4.5 supporting numeric, categorical, and null values
+class DecisionTree(BaseClassifier): # DTL ID3 and C4.5 supporting numeric, categorical, and null values
 
     def __init__(self, algorithm: str = "C4.5", max_depth: int = 10, min_samples_split: int = 5, min_gain: float = 1e-4):
         super().__init__()

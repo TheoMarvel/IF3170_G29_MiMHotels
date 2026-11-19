@@ -9,7 +9,7 @@ from src.dependencies import (
 )
 
 
-class LogisticRegressionScratch(BaseClassifier): # Logistic Regression with L1, L2, and Elastic Net
+class LogisticRegression(BaseClassifier): # Logistic Regression with L1, L2, and Elastic Net
 
     def __init__(
         self,

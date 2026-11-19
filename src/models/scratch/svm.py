@@ -3,7 +3,7 @@ from src.base import BaseClassifier
 from src.dependencies import LinearKernel, PolynomialKernel, GaussianKernel
 
 
-class SVMScratch(BaseClassifier): 
+class SVM(BaseClassifier): 
 
     def __init__(
         self,
