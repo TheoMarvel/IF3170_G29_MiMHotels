@@ -44,19 +44,7 @@ class SVMScratch(BaseClassifier):
         raise ValueError(f"Unknown kernel: {self.kernel}")
 
     def _kernel_matrix(self, X1: np.ndarray, X2: np.ndarray) -> np.ndarray:
-        k = self.kernel.lower()
-        if k == "linear":
-            return np.dot(X1, X2.T)
-        elif k in ("poly", "polynomial"):
-            return (self.gamma * np.dot(X1, X2.T) + self.bias_kernel) ** self.degree
-        elif k in ("gaussian", "rbf"):
-            x1_sq = np.sum(X1 ** 2, axis=1, keepdims=True)
-            x2_sq = np.sum(X2 ** 2, axis=1, keepdims=True).T
-            sq_dist = np.maximum(x1_sq + x2_sq - 2 * np.dot(X1, X2.T), 0.0)
-            return np.exp(-self.gamma * sq_dist)
-        # Fallback to pairwise call on Kernel object
-        kernel_fn = self._get_kernel()
-        return np.array([[kernel_fn.compute(x1, x2) for x2 in X2] for x1 in X1])
+        return self._get_kernel().compute(X1, X2)
 
     def fit(self, X, y):
         X_arr = np.asarray(X, dtype=float)
