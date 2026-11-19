@@ -10,7 +10,7 @@ class PreprocessingPipeline(BaseTransformer): # Chains multiple preprocessing tr
     def fit(self, X, y=None):
         data = X
         for step in self.steps:
-            data = step.fit(data, y)
+            data = step.fit_transform(data, y)
         self.is_fitted = True
         return self
 
