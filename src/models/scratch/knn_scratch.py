@@ -5,7 +5,7 @@ from src.dependencies import EuclideanDistance, ManhattanDistance, MinkowskiDist
 
 class KNNScratch(BaseClassifier): # K-Nearest Neighbors classifier
 
-    def __init__(self, k: int = 3, distance: str = "euclidean", p: float = 2.0, weights: str = "uniform", batch_size: int = 200):
+    def __init__(self, k: int = 3, distance: str = "euclidean", p: float = 2.0, weights: str = "uniform", batch_size: int = 50):
         super().__init__()
         self.k = k
         self.distance = distance   # "euclidean", "manhattan", or "minkowski"
