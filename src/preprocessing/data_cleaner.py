@@ -5,10 +5,10 @@ from src.base import BaseTransformer
 
 class DataCleaner(BaseTransformer): # Imputes missing values using train statistics
 
-    def __init__(self, num_inputation: str = "median", cat_inputation: str = "mode"):
+    def __init__(self, num_imputation: str = "median", cat_imputation: str = "mode"):
         super().__init__()
-        self.num_inputation = num_inputation
-        self.cat_inputation = cat_inputation
+        self.num_imputation = num_imputation
+        self.cat_imputation = cat_imputation
         self.fill_values_ = {}
 
     def fit(self, X: pd.DataFrame, y=None):
@@ -17,7 +17,7 @@ class DataCleaner(BaseTransformer): # Imputes missing values using train statist
 
         for col in df.columns:
             if pd.api.types.is_numeric_dtype(df[col]):
-                if self.num_inputation == "mean":
+                if self.num_imputation == "mean":
                     self.fill_values_[col] = df[col].mean()
                 else:
                     self.fill_values_[col] = df[col].median()
