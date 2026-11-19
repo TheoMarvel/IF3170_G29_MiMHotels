@@ -3,7 +3,7 @@ from src.base import BaseClassifier
 from src.dependencies import EuclideanDistance, ManhattanDistance, MinkowskiDistance
 
 
-class KNN(BaseClassifier): # K-Nearest Neighbors classifier
+class KNNScratch(BaseClassifier): # K-Nearest Neighbors classifier
 
     def __init__(self, k: int = 3, distance: str = "euclidean", p: float = 2.0, weights: str = "uniform", batch_size: int = 200):
         super().__init__()
