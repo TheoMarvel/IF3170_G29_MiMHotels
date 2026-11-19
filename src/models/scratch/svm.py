@@ -52,7 +52,7 @@ class SVMScratch(BaseClassifier):
         elif k in ("gaussian", "rbf"):
             x1_sq = np.sum(X1 ** 2, axis=1, keepdims=True)
             x2_sq = np.sum(X2 ** 2, axis=1, keepdims=True).T
-            sq_dist = np.maximum(x1_sq + x2_sq - 2 * np.dot(X1.T, X2), 0.0)
+            sq_dist = np.maximum(x1_sq + x2_sq - 2 * np.dot(X1, X2.T), 0.0)
             return np.exp(-self.gamma * sq_dist)
         # Fallback to pairwise call on Kernel object
         kernel_fn = self._get_kernel()
