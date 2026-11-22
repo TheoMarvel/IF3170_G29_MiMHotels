@@ -4,7 +4,9 @@ import pickle
 class Serializer: # Save and load models
     @staticmethod
     def save(model, filepath: str):
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        dirname = os.path.dirname(filepath)
+        if dirname:
+            os.makedirs(dirname, exist_ok=True)
         with open(filepath, "wb") as f:
             pickle.dump(model, f)
 
