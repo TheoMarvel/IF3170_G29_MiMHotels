@@ -35,7 +35,7 @@ class DecisionTreeScratch(BaseClassifier): # DTL ID3 and C4.5 supporting numeric
             idx = rng.permutation(len(y_arr))
             n_prune = int(0.15 * len(y_arr))
             prune_idx, grow_idx = idx[:n_prune], idx[n_prune:]
-            self.root_ = self._build_tree(X_arr[prune_idx], y_arr[grow_idx], depth=0)
+            self.root_ = self._build_tree(X_arr[grow_idx], y_arr[grow_idx], depth=0)
             self._prune_node(self.root_, X_arr[prune_idx], y_arr[prune_idx])
         else:
             self.root_ = self._build_tree(X_arr, y_arr, depth=0)
@@ -123,7 +123,9 @@ class DecisionTreeScratch(BaseClassifier): # DTL ID3 and C4.5 supporting numeric
         valid = ~pd.isna(col)
         for key, child in node.children.items():
             if node.is_continuous:
-                mask = valid & ((col.astype(float) <= node.threshold) if key =="left" else (col.astype(float) > node.threshold))
+                mask = np.zeros(len(y_sub), dtype=bool)
+                vals = col[valid].astype(float)
+                mask[valid] = (vals <= node.threshold) if key == "left" else (vals > node.threshold)
             else:
                 mask = valid & (col == key)
 
