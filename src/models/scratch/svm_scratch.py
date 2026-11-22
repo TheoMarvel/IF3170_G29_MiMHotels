@@ -64,7 +64,7 @@ class SVMScratch(BaseClassifier):
 
         Y_K = np.outer(y_signed, y_signed) * K
 
-        eff_lr = np.mininum(self.lr, 1.0 / (np.sum(np.abs(Y_K), axis=1) + 1e-8))
+        eff_lr = np.minimum(self.lr, 1.0 / (np.sum(np.abs(Y_K), axis=1) + 1e-8))
         for _ in range(self.max_iter):
             grad = 1.0 - np.dot(Y_K, alphas)
             alphas = np.clip(alphas + eff_lr * grad, 0.0, self.C)
