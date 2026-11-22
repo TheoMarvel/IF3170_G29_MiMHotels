@@ -6,12 +6,14 @@ from src.dependencies import InformationGain, GainRatio, DecisionTreeNode
 
 class DecisionTreeScratch(BaseClassifier): # DTL ID3 and C4.5 supporting numeric, categorical, and null values
 
-    def __init__(self, algorithm: str = "C4.5", max_depth: int = 10, min_samples_split: int = 5, min_gain: float = 1e-4):
+    def __init__(self, algorithm: str = "C4.5", max_depth: int = 10, min_samples_split: int = 5, min_gain: float = 1e-4, post_prune: bool = False, random_state: int=None):
         super().__init__()
         self.algorithm = algorithm  # "ID3" or "C4.5"
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.min_gain = min_gain
+        self.post_prune = post_prune
+        self.random_state = random_state
         self.root_ = None
         self.is_continuous_ = []
 
@@ -28,7 +30,16 @@ class DecisionTreeScratch(BaseClassifier): # DTL ID3 and C4.5 supporting numeric
             is_num = len(valid) > 0 and isinstance(valid[0], (int, float, np.number))
             self.is_continuous_.append(is_num and len(np.unique(valid)) > 10)
 
-        self.root_ = self._build_tree(X_arr, y_arr, depth=0)
+        if self.post_prune and len(y_arr) >= 20:
+            rng = np.random.default_rng(self.random_state)
+            idx = rng.permutation(len(y_arr))
+            n_prune = int(0.15 * len(y_arr))
+            prune_idx, grow_idx = idx[:n_prune], idx[n_prune:]
+            self.root_ = self._build_tree(X_arr[prune_idx], y_arr[grow_idx], depth=0)
+            self._prune_node(self.root_, X_arr[prune_idx], y_arr[prune_idx])
+        else:
+            self.root_ = self._build_tree(X_arr, y_arr, depth=0)
+
         self.is_fitted = True
         return self
 
@@ -103,32 +114,36 @@ class DecisionTreeScratch(BaseClassifier): # DTL ID3 and C4.5 supporting numeric
 
         return node
 
-    def _prune_node(self, node: DecisionTreeNode, X_prune: np.ndarray, y_prune:np.ndarray):
-        if node.is_leaf or not node.children:
+    def _prune_node(self, node: DecisionTreeNode, X_sub: np.ndarray, y_sub:np.ndarray):
+        if node.is_leaf or not node.children or len(y_sub) == 0:
             return
 
         # 1. Bottom-up: prune all child subtrees first
-        for child in node.children.values():
-            self._prune_node(child, X_prune, y_prune)
+        col = X_sub[:, node.feature_idx]
+        valid = ~pd.isna(col)
+        for key, child in node.children.items():
+            if node.is_continuous:
+                mask = valid & ((col.astype(float) <= node.threshold) if key =="left" else (col.astype(float) > node.threshold))
+            else:
+                mask = valid & (col == key)
 
-        # 2. Evaluate accuracy before collapsing this node
-        acc_before = np.mean(self.predict(X_prune) == y_prune)
+            if np.any(mask):
+                self._prune_node(child, X_sub[mask], y_sub[mask])
 
-        # 3. Temproarily collapse this node into a leaf and re-evaluate
-        node.is_leaf = True
-        acc_after = np.mean(self.predict(X_prune) == y_prune)
+        # 2. Compare subtree accuracy vs. leaf accuracy on rows reaching this node
+        subtree_preds = np.array([self.classes_[np.argmax(self._predict_row(r, node))] for r in X_sub])
+        acc_subtree = np.mean(subtree_preds == y_sub)
+        acc_leaf = np.mean(node.predicted_class == y_sub)
 
-        # 4. Keep it pruned if accuracy didn't drop; otherwise restore
-        if acc_after >= acc_before:
+        if acc_leaf >= acc_subtree:
+            node.is_leaf = True
             node.children = {}
-        else:
-            node.is_leaf = False
 
-        def prune(self, X_prune, y_prune):
-            self._check_is_fitted()
-            self._prune_node(self.root_, np.asarray(X_prune, dtype=object), np.asarray(y_prune))
-            return self
-
+    def prune(self, X_prune, y_prune):
+        self._check_is_fitted()
+        self._prune_node(self.root_, np.asarray(X_prune, dtype=object), np.asarray(y_prune))
+        return self    
+    
     def _predict_row(self, row: np.ndarray, node: DecisionTreeNode) -> np.ndarray:
         if node.is_leaf or not node.children:
             return node.class_probs
