@@ -103,6 +103,32 @@ class DecisionTreeScratch(BaseClassifier): # DTL ID3 and C4.5 supporting numeric
 
         return node
 
+    def _prune_node(self, node: DecisionTreeNode, X_prune: np.ndarray, y_prune:np.ndarray):
+        if node.is_leaf or not node.children:
+            return
+
+        # 1. Bottom-up: prune all child subtrees first
+        for child in node.children.values():
+            self._prune_node(child, X_prune, y_prune)
+
+        # 2. Evaluate accuracy before collapsing this node
+        acc_before = np.mean(self.predict(X_prune) == y_prune)
+
+        # 3. Temproarily collapse this node into a leaf and re-evaluate
+        node.is_leaf = True
+        acc_after = np.mean(self.predict(X_prune) == y_prune)
+
+        # 4. Keep it pruned if accuracy didn't drop; otherwise restore
+        if acc_after >= acc_before:
+            node.children = {}
+        else:
+            node.is_leaf = False
+
+        def prune(self, X_prune, y_prune):
+            self._check_is_fitted()
+            self._prune_node(self.root_, np.asarray(X_prune, dtype=object), np.asarray(y_prune))
+            return self
+
     def _predict_row(self, row: np.ndarray, node: DecisionTreeNode) -> np.ndarray:
         if node.is_leaf or not node.children:
             return node.class_probs
