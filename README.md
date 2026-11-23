@@ -12,7 +12,7 @@ IF3170_G29_MiMHotels/
 │   └── sample_submission.csv
 ├── docs/                                     # Documentation assets
 ├── output/
-│   ├── Notebook_Tugas_Besar_2_IF3170_Inteligensi_Artifisial_2026_2027.ipynb
+│   ├── Notebook_G29_MiMHotels.ipynb
 │   ├── models/                               # Saved .pkl models and fitted pipeline
 │   └── submission*.csv                       # Generated Kaggle submission files
 └── src/
