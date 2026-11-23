@@ -18,7 +18,7 @@ class LogisticRegressionScratch(BaseClassifier): # Logistic Regression with L1, 
         penalty: str = "elasticnet",
         lambda_val: float = 0.01,
         l1_ratio: float = 0.5,
-        batch_size: int = 256,
+        batch_size: int = 250,
         random_state: int = 42,
     ):
         super().__init__()
